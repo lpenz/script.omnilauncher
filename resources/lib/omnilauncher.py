@@ -16,23 +16,25 @@ class Omnilauncher(object):
 
     def run(self):
         for d in os.listdir(self.home):
-            nfofile = pjoin(self.home, d, 'collection.nfo')
+            itemfile = pjoin(self.home, d, 'omniitem.nfo')
             try:
-                et = xmltree.parse(nfofile)
+                et = xmltree.parse(itemfile)
             except Exception:
                 continue
             li = xbmcgui.ListItem(et.find('./title').text)
             nfo = {}
-            for field in ['year', 'plot']:
-                i = et.find('./' + field)
-                if i:
-                    nfo[field] = i
+            for etinfo in et.iter('info'):
+                for etfield in etinfo.iter():
+                    if etfield == etinfo:
+                        continue
+                    nfo[etfield.tag] = etfield.text
             li.setInfo('video', nfo)
             art = {}
-            for field in ['fanart', 'thumb']:
-                i = et.find('./' + field)
-                if i is not None:
-                    art[field] = pjoin(self.home, d, i.text)
+            for etart in et.iter('art'):
+                for etfield in etart.iter():
+                    if etfield == etart:
+                        continue
+                    art[etfield.tag] = pjoin(self.home, d, etfield.text)
             li.setArt(art)
             xbmcplugin.addDirectoryItem(self.handle, u'', li)
         xbmcplugin.endOfDirectory(self.handle)
