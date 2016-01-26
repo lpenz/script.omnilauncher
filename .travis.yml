@@ -9,6 +9,7 @@ before_install:
   # static checkers:
   - pip install flake8 py3kwarn
 script:
+  - nosetests --with-coverage tests
   # Test if we .gitignore test files:
   - TMP=$(tempfile)
   - git ls-files . --exclude-standard --others | tee "$TMP"
