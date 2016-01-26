@@ -9,9 +9,8 @@
 	<extension point="xbmc.addon.metadata">
 		<platform>all</platform>
 		<summary lang="en">Launch anything</summary>
-		<description lang="en">Add thumbnail, fanart and other metadata to any command-line</description>
+		<description lang="en">Add thumbnail, fanart and other metadata to any command-line tool, and launch it from kodi</description>
 		<license>The MIT License (MIT)</license>
-		<language></language>
 		<source>https://github.com/lpenz/script.omnilauncher</source>
 		<email>lpenz@lpenz.org</email>
 	</extension>
