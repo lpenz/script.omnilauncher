@@ -11,6 +11,7 @@ except ImportError:
     import urllib.parse as urlencodemodule
 
 import subprocess
+from glob import glob
 import xml.etree.ElementTree as xmltree
 
 pj = os.path.join
@@ -22,18 +23,24 @@ class Omnilauncher(object):
 
     def __init__(self, kodi):
         self.kodi = kodi
-        self.home = kodi.getSetting('home')
+        self.root = kodi.getSetting('root')
 
     def run(self, uri, args):
         if len(args) == 0:
-            self.top(uri, args)
-            return
-        if 'command' in args:
-            subprocess.call(args['command'], shell=True)
+            self.menu_render(self.root)
+        elif args['type'][0] == 'command':
+            subprocess.call(args['target'], shell=True)
 
-    def top(self, uri, args):
-        for d in os.listdir(self.home):
-            self.item_add(pj(self.home, d, 'omniitem.nfo'))
+    def menu_render(self, itemfile):
+        try:
+            et = xmltree.parse(itemfile)
+        except Exception:
+            return
+        basepath = os.path.dirname(itemfile)
+        for target in et.iter('target'):
+            if target.get('type') == 'glob':
+                for f in glob(pj(basepath, target.text)):
+                    self.item_add(f)
         self.kodi.endOfDirectory()
 
     def item_add(self, itemfile):
@@ -58,13 +65,12 @@ class Omnilauncher(object):
                     os.path.dirname(itemfile),
                     etfield.text)
         self.kodi.setArt(li, art)
-        for target in et.iter('target'):
-            if target.get('type') == 'command':
-                uri = URI_TOP + '?' + \
-                    urlencodemodule.urlencode(
-                        {
-                            'itemfile': itemfile,
-                            'command': target.text
-                        })
-                self.kodi.addDirectoryItem(
-                    uri, li, isFolder=False)
+        # The first target is the menu action
+        target = next(et.iter('target'))
+        isFolder = target.get('type') != 'command'
+        uridict = {'itemfile': itemfile,
+                   'type': target.get('type'),
+                   'target': target.text}
+        uri = URI_TOP + '?' + urlencodemodule.urlencode(uridict)
+        self.kodi.addDirectoryItem(
+            uri, li, isFolder=isFolder)
