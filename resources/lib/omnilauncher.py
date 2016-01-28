@@ -66,7 +66,8 @@ class Omnilauncher(object):
                 if etfield == etinfo:
                     continue
                 nfo[etfield.tag] = etfield.text
-        self.kodi.setInfo(li, 'video', nfo)
+        if len(nfo) > 0:
+            self.kodi.setInfo(li, 'video', nfo)
         art = {}
         for etart in et.iter('art'):
             for etfield in etart.iter():
@@ -75,7 +76,8 @@ class Omnilauncher(object):
                 art[etfield.tag] = pj(
                     os.path.dirname(itemfile),
                     etfield.text)
-        self.kodi.setArt(li, art)
+        if len(art) > 0:
+            self.kodi.setArt(li, art)
         # The first target is the menu action
         target = next(et.iter('target'))
         isFolder = target.get('type') != 'command'
