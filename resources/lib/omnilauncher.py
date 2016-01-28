@@ -32,9 +32,16 @@ class Omnilauncher(object):
 
     def __init__(self, kodi):
         self.kodi = kodi
-        self.root = kodi.getSetting('root')
+        try:
+            self.root = kodi.getSetting('root')
+        except:
+            self.root = ''
 
     def run(self, uri, args):
+        if self.root == '':
+            self.kodi.notification(
+                'Please configure root omniitem in settings')
+            return
         if len(args) == 0:
             self.menu_render(self.root)
         elif args['type'][0] == 'command':

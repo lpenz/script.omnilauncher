@@ -27,3 +27,6 @@ class KodiService(object):
 
     def endOfDirectory(self):
         return xbmcplugin.endOfDirectory(self.handle)
+
+    def notification(self, msg):
+        xbmcgui.Dialog().notification('omnilauncher error', msg)
