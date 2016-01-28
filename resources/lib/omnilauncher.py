@@ -5,6 +5,7 @@ The official code is in kodiservice.py.
 '''
 
 import os
+import logging
 try:
     import urllib as urlencodemodule
 except ImportError:
@@ -17,6 +18,14 @@ import xml.etree.ElementTree as xmltree
 pj = os.path.join
 
 URI_TOP = u'plugin://script.omnilauncher/'
+
+
+def _log():
+    if _log.logger is None:
+        logging.basicConfig()
+        _log.logger = logging.getLogger(__name__)
+    return _log.logger
+_log.logger = None
 
 
 class Omnilauncher(object):
@@ -34,7 +43,8 @@ class Omnilauncher(object):
     def menu_render(self, itemfile):
         try:
             et = xmltree.parse(itemfile)
-        except Exception:
+        except Exception as e:
+            _log().warn(str(e))
             return
         basepath = os.path.dirname(itemfile)
         for target in et.iter('target'):
@@ -46,7 +56,8 @@ class Omnilauncher(object):
     def item_add(self, itemfile):
         try:
             et = xmltree.parse(itemfile)
-        except Exception:
+        except Exception as e:
+            _log().warn(str(e))
             return
         li = self.kodi.listItem(et.find('./title').text)
         nfo = {}
