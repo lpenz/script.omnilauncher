@@ -7,9 +7,9 @@ The official code is in kodiservice.py.
 import os
 import logging
 try:
-    import urllib as urlencodemodule
-except ImportError:
     import urllib.parse as urlencodemodule
+except ImportError:
+    import urllib as urlencodemodule
 
 import subprocess
 from glob import glob
