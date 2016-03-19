@@ -9,24 +9,23 @@ class KodiService(object):
     def __init__(self, handle):
         self.handle = handle
 
-    def getSetting(self, name):
-        return xbmcplugin.getSetting(self.handle, name)
+    def getSetting(self, *args, **kwargs):
+        return xbmcplugin.getSetting(self.handle, *args, **kwargs)
 
-    def listItem(self, text):
-        return xbmcgui.ListItem(text)
+    def listItem(self, *args, **kwargs):
+        return xbmcgui.ListItem(*args, **kwargs)
 
-    def setInfo(self, li, name, nfo):
-        return li.setInfo(name, nfo)
+    def setInfo(self, li, *args, **kwargs):
+        return li.setInfo(*args, **kwargs)
 
-    def setArt(self, li, art):
-        return li.setArt(art)
+    def setArt(self, li, *args, **kwargs):
+        return li.setArt(*args, **kwargs)
 
-    def addDirectoryItem(self, uri, li, isFolder=False):
-        return xbmcplugin.addDirectoryItem(self.handle,
-                                           uri, li, isFolder=False)
+    def addDirectoryItem(self, *args, **kwargs):
+        return xbmcplugin.addDirectoryItem(self.handle, *args, **kwargs)
 
-    def endOfDirectory(self):
-        return xbmcplugin.endOfDirectory(self.handle)
+    def endOfDirectory(self, *args, **kwargs):
+        return xbmcplugin.endOfDirectory(self.handle, *args, **kwargs)
 
-    def notification(self, msg):
-        xbmcgui.Dialog().notification('omnilauncher error', msg)
+    def notification(self, *args, **kwargs):
+        xbmcgui.Dialog().notification('omnilauncher error', *args, **kwargs)

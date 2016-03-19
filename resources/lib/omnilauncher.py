@@ -17,8 +17,6 @@ import xml.etree.ElementTree as xmltree
 
 pj = os.path.join
 
-URI_TOP = u'plugin://script.omnilauncher/'
-
 
 def _log():
     if _log.logger is None:
@@ -32,20 +30,21 @@ class Omnilauncher(object):
 
     def __init__(self, kodi):
         self.kodi = kodi
-        try:
-            self.root = kodi.getSetting('root')
-        except:
-            self.root = ''
 
     def run(self, uri, args):
-        if self.root == '':
-            self.kodi.notification(
-                'Please configure root omniitem in settings')
-            return
+        self.uri = uri
         if len(args) == 0:
-            self.menu_render(self.root)
+            try:
+                root = self.kodi.getSetting('root')
+            except:
+                self.kodi.notification(
+                    'Please configure root omniitem in settings')
+                raise
+            self.menu_render(root)
         elif args['type'][0] == 'command':
             subprocess.call(args['target'], shell=True)
+        else:
+            self.menu_render(args['itemfile'][0])
 
     def menu_render(self, itemfile):
         try:
@@ -91,6 +90,6 @@ class Omnilauncher(object):
         uridict = {'itemfile': itemfile,
                    'type': target.get('type'),
                    'target': target.text}
-        uri = URI_TOP + '?' + urlencodemodule.urlencode(uridict)
+        uri = self.uri + '?' + urlencodemodule.urlencode(uridict)
         self.kodi.addDirectoryItem(
             uri, li, isFolder=isFolder)
