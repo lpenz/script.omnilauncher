@@ -66,8 +66,9 @@ class TestOmnilauncher(unittest.TestCase):
         '''Notify if no root configured'''
         m = MockService()
         o = omnilauncher.Omnilauncher(m)
-        # with no root, it should have printed a notification
-        o.run('', {})
+        # with no root, it should have print a notification and raise
+        with self.assertRaises(Exception):
+            o.run('', {})
         self.assertTrue(len(m.notifications) > 0)
 
     def test_root_glob(self):
