@@ -16,6 +16,8 @@ def _log():
         logging.basicConfig()
         _log.logger = logging.getLogger(__name__)
     return _log.logger
+
+
 _log.logger = None
 
 
@@ -27,6 +29,7 @@ def main():
     kodi = kodiservice.KodiService(handle)
     o = omnilauncher.Omnilauncher(kodi)
     o.run(uri, args)
+
 
 if __name__ == "__main__":
     main()

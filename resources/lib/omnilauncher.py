@@ -23,6 +23,8 @@ def _log():
         logging.basicConfig()
         _log.logger = logging.getLogger(__name__)
     return _log.logger
+
+
 _log.logger = None
 
 
@@ -36,7 +38,7 @@ class Omnilauncher(object):
         if len(args) == 0:
             try:
                 root = self.kodi.getSetting('root')
-            except:
+            except Exception:
                 self.kodi.notification(
                     'Please configure root omniitem in settings')
                 raise
