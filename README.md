@@ -1,51 +1,50 @@
-[![Build Status](https://travis-ci.org/lpenz/script.omnilauncher.svg?branch=master)](https://travis-ci.org/lpenz/script.omnilauncher)
+[![Build Status](https://travis-ci.com/lpenz/script.omnilauncher.svg?branch=master)](https://travis-ci.com/lpenz/script.omnilauncher)
 [![Coverage Status](https://coveralls.io/repos/lpenz/script.omnilauncher/badge.svg)](https://coveralls.io/r/lpenz/script.omnilauncher)
 
 
 # script.omnilauncher
 
-Omni launcher add-on for kodi
+Omnilauncher is an addon for kodi that interprets XML files in a
+directory and builds a menu tree that can also launch programs.
 
-This is a program addon that interprets *nfo* XML files with the usual
-information and artwork file reference, and builds a menu tree in kodi, where
-the leafs are allowed to run arbitrary commands. The example below clarifies
-how it works.
-
-I've been using this addon since Advanced Laucher went belly up.
+This addon doesn't do any scrapping, it just uses what is in the XML
+files. It should be used as a glue between a third-party program that
+actually does the scrapping and creates the XML and kodi.
 
 
 ## Examples
 
-An example menu file, placed in `c:\Program Files` could be the following:
+The only configuration in this addon is the root directory, where all XML
+files will be read, and a menu item is created for each one of them.
+
+One could have, for instance, the following file in the root directory:
 ```
 <?xml version='1.0' encoding='UTF-8'?>
-<omniitem>
-  <title>Programs</title>
+<omnilauncher>
+  <title>Google chrome</title>
   <info>
-      <plot>Generic programs</plot>
+      <plot>Web browser developed by Google</plot>
   </info>
   <art>
       <thumb>thumb.png</thumb>
       <fanart>fanart.jpg</fanart>
   </art>
-  <target type="glob">*/omniitem.nfo</target>
-</omniitem>
+  <target type="shell">google-chrome</target>
+</omnilauncher>
 ```
 
-You could then have a `c:\Program Files\Internet Explorer\omniitem.nfo` file
-with the following contents:
+Another entry could point to a *Games* directory:
 ```
 <?xml version='1.0' encoding='UTF-8'?>
-<omniitem>
-  <title>Internet Explorer</title>
-  <info>
-      <plot>An obsolete browser that is not good at all</plot>
-  </info>
+<omnilauncher>
+  <title>Games</title>
   <art>
       <thumb>thumb.png</thumb>
       <fanart>fanart.jpg</fanart>
   </art>
-  <target type="command">iexplore.exe</target>
-</omniitem>
+  <target type="directory">games</target>
+</omnilauncher>
 ```
 
+Selecting this entry would make omnilauncher parse all XML files in
+the `Games` directory and build another menu tree.

@@ -1,11 +1,12 @@
-"""Core code of omnilauncher
+"""
+Core code of omnilauncher
 
 To ease testing, we inject kodi API as a service.
 The official code is in kodiservice.py.
 """
 
 import os
-import logging
+from resources.lib.log import getLogger
 
 try:
     import urllib.parse as urlencodemodule
@@ -13,20 +14,11 @@ except ImportError:
     import urllib as urlencodemodule
 
 import subprocess
-from glob import glob
-import xml.etree.ElementTree as xmltree
+import xml.etree.ElementTree as Xmltree
+
 
 pj = os.path.join
-
-
-def _log():
-    if _log.logger is None:
-        logging.basicConfig()
-        _log.logger = logging.getLogger(__name__)
-    return _log.logger
-
-
-_log.logger = None
+log = getLogger(__name__)
 
 
 class Omnilauncher(object):
@@ -39,33 +31,41 @@ class Omnilauncher(object):
             try:
                 root = self.kodi.getSetting("root")
             except Exception:
-                self.kodi.notification("Please configure root omniitem in settings")
+                self.kodi.notification(
+                    "Please configure collection root path in settings"
+                )
                 raise
-            self.menu_render(root)
-        elif args["type"][0] == "command":
-            subprocess.call(args["target"], shell=True)
+            self.directory_render(root)
+        elif args["type"][0] == "shell":
+            cmd = "cd {}; {}".format(args["path"][0], args["target"][0])
+            log.info("shell start: {}".format(cmd))
+            subprocess.check_call(args["target"][0], cwd=args["path"][0],
+                                  shell=True)
+            log.info("shell  done: {}".format(cmd))
+        elif args["type"][0] == "directory":
+            path = pj(args["path"][0], args["target"][0])
+            log.debug("directory render: {}".format(path))
+            self.directory_render(path)
         else:
-            self.menu_render(args["itemfile"][0])
+            raise KeyError("unknown type {}".format(args["type"][0]))
 
-    def menu_render(self, itemfile):
-        try:
-            et = xmltree.parse(itemfile)
-        except Exception as e:
-            _log().warn(str(e))
-            return
-        basepath = os.path.dirname(itemfile)
-        for target in et.iter("target"):
-            if target.get("type") == "glob":
-                for f in glob(pj(basepath, target.text)):
-                    self.item_add(f)
+    def directory_render(self, path):
+        for filebase in os.listdir(path):
+            filename = pj(path, filebase)
+            if not filename.endswith(".xml"):
+                continue
+            try:
+                et = Xmltree.parse(filename)
+            except Exception as e:
+                log.warn(str((filename, e)))
+                continue
+            root = et.getroot()
+            if root.tag != "omnilauncher":
+                continue
+            self.item_add(path, filename, et)
         self.kodi.endOfDirectory()
 
-    def item_add(self, itemfile):
-        try:
-            et = xmltree.parse(itemfile)
-        except Exception as e:
-            _log().warn(str(e))
-            return
+    def item_add(self, path, filename, et):
         li = self.kodi.listItem(et.find("./title").text)
         nfo = {}
         for etinfo in et.iter("info"):
@@ -80,16 +80,14 @@ class Omnilauncher(object):
             for etfield in etart.iter():
                 if etfield == etart:
                     continue
-                art[etfield.tag] = pj(os.path.dirname(itemfile), etfield.text)
+                art[etfield.tag] = pj(path, etfield.text)
         if len(art) > 0:
             self.kodi.setArt(li, art)
-        # The first target is the menu action
+        # The first <target> is the menu action
         target = next(et.iter("target"))
-        isFolder = target.get("type") != "command"
-        uridict = {
-            "itemfile": itemfile,
-            "type": target.get("type"),
-            "target": target.text,
-        }
+        typ = target.get("type")
+        uridict = {"type": typ, "path": path, "target": target.text}
+        isfolder = typ == "directory"
+        log.debug("addDirectoryItem {}, isFolder={}".format(uridict, isfolder))
         uri = self.uri + "?" + urlencodemodule.urlencode(uridict)
-        self.kodi.addDirectoryItem(uri, li, isFolder=isFolder)
+        self.kodi.addDirectoryItem(url=uri, listitem=li, isFolder=isfolder)

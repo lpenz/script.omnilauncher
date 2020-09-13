@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <settings>
     <category label="General">
-        <setting id="root" type="file" label="Collection root" default="" />
+        <setting id="root" type="folder" label="Collection root path" default="" />
     </category>
 </settings>

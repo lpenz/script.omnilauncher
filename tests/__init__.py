@@ -17,26 +17,27 @@ class MockService(object):
         self.directory = {}
         self.notifications = []
 
-    def getSetting(self, name):
+    def getSetting(self, name):  # noqa: N802
         return self.settings[name]
 
-    def listItem(self, text):
+    def listItem(self, text):  # noqa: N802
         li = {"text": text}
         return li
 
-    def setInfo(self, li, name, nfo):
+    def setInfo(self, li, name, nfo):  # noqa: N802
         li[name] = nfo
 
-    def setArt(self, li, art):
+    def setArt(self, li, art):  # noqa: N802
         li["art"] = art
 
-    def addDirectoryItem(self, uri, li, isFolder=False):
-        self.directory_tmp[uri] = (li, isFolder)
+    def addDirectoryItem(self, uri, listitem,
+                         isFolder=False):  # noqa: N802,N803
+        self.directory_tmp[uri] = (listitem, isFolder)
 
-    def endOfDirectory(self):
+    def endOfDirectory(self):  # noqa: N802
         self.directory = self.directory_tmp
 
-    def notification(self, msg):
+    def notification(self, msg):  # noqa: N802
         self.notifications.append(msg)
 
 
@@ -71,26 +72,3 @@ class TestOmnilauncher(unittest.TestCase):
         with self.assertRaises(Exception):
             o.run("", {})
         self.assertTrue(len(m.notifications) > 0)
-
-    def test_root_glob(self):
-        """Test single-file glob"""
-        tmp = tmpwritexml(
-            u"""
-            <omniitem>
-              <title>item1</title>
-              <target type="command">echo 1</target>
-            </omniitem>
-        """
-        )
-        m = self.mock_with_root(
-            u"""
-            <omniitem>
-                <target type="glob">{}</target>
-            </omniitem>
-        """.format(
-                tmp.name
-            )
-        )
-        o = omnilauncher.Omnilauncher(m)
-        o.run("", [])
-        self.assertEqual(list(m.directory.values()), [({"text": "item1"}, False)])
