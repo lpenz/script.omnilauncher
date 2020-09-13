@@ -1,11 +1,10 @@
-'''Kodi service that is injected into the omnilauncher client'''
+"""Kodi service that is injected into the omnilauncher client"""
 
 import xbmcgui
 import xbmcplugin
 
 
 class KodiService(object):
-
     def __init__(self, handle):
         self.handle = handle
 
@@ -28,4 +27,4 @@ class KodiService(object):
         return xbmcplugin.endOfDirectory(self.handle, *args, **kwargs)
 
     def notification(self, *args, **kwargs):
-        xbmcgui.Dialog().notification('omnilauncher error', *args, **kwargs)
+        xbmcgui.Dialog().notification("omnilauncher error", *args, **kwargs)
