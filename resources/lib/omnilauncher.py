@@ -27,7 +27,7 @@ class Omnilauncher(object):
 
     def run(self, uri, args):
         self.uri = uri
-        if len(args) == 0:
+        if not args or "type" not in args:
             try:
                 root = self.kodi.getSetting("root")
             except Exception:

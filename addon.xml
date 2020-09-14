@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <addon id="script.omnilauncher" name="Omni launcher" version="0.1" provider-name="lpenz">
-    <requires>
-		<import addon="xbmc.python" version="2.14.0"/>
-	</requires>
-	<extension point="xbmc.python.pluginsource" library="addon.py">
-		<provides>executable</provides>
-	</extension>
-	<extension point="xbmc.addon.metadata">
-		<platform>all</platform>
-		<summary lang="en">Launch anything</summary>
-		<description lang="en">Add thumbnail, fanart and other metadata to any command-line tool, and launch it from kodi</description>
-		<license>The MIT License (MIT)</license>
-		<source>https://github.com/lpenz/script.omnilauncher</source>
-		<email>lpenz@lpenz.org</email>
-	</extension>
+  <requires>
+    <import addon="xbmc.python" version="2.25.0"/>
+  </requires>
+  <extension point="xbmc.python.pluginsource" library="addon.py">
+    <provides>executable game</provides>
+  </extension>
+  <extension point="xbmc.addon.metadata">
+    <platform>all</platform>
+    <summary lang="en">Launch anything</summary>
+    <description lang="en">Add thumbnail, fanart and other metadata to any command-line tool, and launch it from kodi</description>
+    <license>The MIT License (MIT)</license>
+    <source>https://github.com/lpenz/script.omnilauncher</source>
+    <email>lpenz@lpenz.org</email>
+  </extension>
 </addon>
